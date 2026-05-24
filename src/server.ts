@@ -1,15 +1,16 @@
+/* eslint-disable no-console */
 import { Server } from "http";
 import app from "./app";
 import "dotenv/config";
-import { error } from "console";
+import { envVars } from "./app/config/env";
+
 
 let server: Server;
-const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
-    server = app.listen(PORT, () => {
-      console.log(`PrepHive Server is running on the port ${PORT}`)
+    server = app.listen(envVars.PORT, () => {
+      console.log(`PrepHive Server is running on the port ${envVars.PORT}`)
     });
   } catch (error) {
     console.log(error)
@@ -44,7 +45,7 @@ process.on("uncaughtException", (error) => {
   }
 })
 
-process.on("SIGTERM", (error)=> {
+process.on("SIGTERM", ()=> {
   console.log("SIGTERM signal received. Server is shutting down...");
   
   if(server){
