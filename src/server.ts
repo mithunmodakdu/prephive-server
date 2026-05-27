@@ -2,7 +2,7 @@
 import { Server } from "http";
 import app from "./app";
 import "dotenv/config";
-import { envVars } from "./app/config/env";
+import { envVars } from "./config/env";
 
 
 let server: Server;
