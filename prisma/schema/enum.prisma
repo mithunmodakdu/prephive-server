@@ -1,0 +1,17 @@
+
+enum EUserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum EUserStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
+enum EGender {
+  MALE
+  FEMALE
+}
