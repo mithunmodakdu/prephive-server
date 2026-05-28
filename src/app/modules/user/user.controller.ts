@@ -6,7 +6,8 @@ import httpStatusCodes from "http-status-codes"
 
 const createStudent = catchAsync(
   async(req: Request, res: Response) => {
-    const result = await UserService.createStudent(req.body);
+    
+    const result = await UserService.createStudent(req);
     
     sendResponse(res, {
       statusCode: httpStatusCodes.CREATED,
