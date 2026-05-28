@@ -24,8 +24,6 @@ export const CreateStudentZodSchema = z.object({
         message: "Name is too long. It must have maximum 50 characters.",
       }),
 
-    profilePhoto: z.string().optional(),
-
     address: z
       .string({ message: "Address must be string" })
       .max(200, { message: "Address can not exceed 200 characters" })
