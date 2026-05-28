@@ -7,4 +7,4 @@ cloudinary.config({
   api_secret: envVars.CLOUDINARY_API_SECRET,
 });
 
-export const cloudinaryUpload = cloudinary;
+export default cloudinary;
