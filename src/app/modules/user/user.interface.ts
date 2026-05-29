@@ -3,7 +3,8 @@ export interface ICreateStudentPayload {
   student: {
     email: string;
     name: string;
-    profilePhoto: string;
+    profilePhoto?: string;
     address?: string;
   };
 }
+

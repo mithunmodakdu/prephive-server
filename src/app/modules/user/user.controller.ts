@@ -6,8 +6,10 @@ import httpStatusCodes from "http-status-codes"
 
 const createStudent = catchAsync(
   async(req: Request, res: Response) => {
-    
-    const result = await UserService.createStudent(req);
+    const file = req.file;
+    const data = req.body;
+
+    const result = await UserService.createStudent(file as Express.Multer.File, data);
     
     sendResponse(res, {
       statusCode: httpStatusCodes.CREATED,
