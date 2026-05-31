@@ -27,7 +27,7 @@ const login = async (payload: { email: string; password: string }) => {
     envVars.JWT_ACCESS_SECRET,
     envVars.JWT_ACCESS_EXPIRE_TIME,
   );
-  
+
   const refreshToken = generateToken(
     { email: user.email, role: user.role },
     envVars.JWT_REFRESH_SECRET,
@@ -37,6 +37,7 @@ const login = async (payload: { email: string; password: string }) => {
   return {
     accessToken,
     refreshToken,
+    needPasswordChange: user.needPasswordChange
   };
 };
 
