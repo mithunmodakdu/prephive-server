@@ -5,6 +5,7 @@ import { validateRequest } from "../../middlewares/validateRequest";
 import {
   CreateAdminZodSchema,
   CreateStudentZodSchema,
+  CreateTeacherZodSchema,
 } from "./user.validation";
 
 const router = express.Router();
@@ -13,14 +14,23 @@ router.post(
   "/create-admin",
   uploadByMulter.single("file"),
   validateRequest(CreateAdminZodSchema),
-  UserController.createAdmin,
+  UserController.createAdmin
 );
 
 router.post(
   "/create-student",
   uploadByMulter.single("file"),
   validateRequest(CreateStudentZodSchema),
-  UserController.createStudent,
+  UserController.createStudent
 );
+
+router.post(
+  "/create-teacher",
+  uploadByMulter.single("file"),
+  validateRequest(CreateTeacherZodSchema),
+  UserController.createTeacher
+)
+
+
 
 export const userRoutes = router;

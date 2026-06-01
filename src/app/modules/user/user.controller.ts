@@ -37,7 +37,23 @@ const createStudent = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const createTeacher = catchAsync(
+  async(req: Request, res: Response) => {
+    const file = req.file;
+    const data = req.body;
+    const result = await UserService.createTeacher(file as Express.Multer.File, data);
+
+    sendResponse(res, {
+      statusCode: httpStatusCodes.CREATED,
+      success: true,
+      message: "Your account has been created as Teacher",
+      data: result
+    })
+  }
+)
+
 export const UserController = {
   createAdmin,
   createStudent,
+  createTeacher
 };
