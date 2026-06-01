@@ -10,6 +10,8 @@ import {
 
 const router = express.Router();
 
+router.get("/", UserController.getAllUsers)
+
 router.post(
   "/create-admin",
   uploadByMulter.single("file"),

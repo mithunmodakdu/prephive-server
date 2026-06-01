@@ -4,6 +4,18 @@ import { UserService } from "./user.service";
 import { sendResponse } from "../../../utils/sendResponse";
 import httpStatusCodes from "http-status-codes";
 
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const {page, limit} = req.query;
+  const result = await UserService.getAllUsers({page: Number(page), limit: Number(limit)});
+
+  sendResponse(res, {
+    statusCode: httpStatusCodes.OK,
+    success: true,
+    message: "All users data retrieved successfully.",
+    data: result,
+  });
+});
+
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
   const file = req.file;
   const data = req.body;
@@ -11,7 +23,7 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
     file as Express.Multer.File,
     data,
   );
-  
+
   sendResponse(res, {
     statusCode: httpStatusCodes.CREATED,
     success: true,
@@ -37,23 +49,25 @@ const createStudent = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const createTeacher = catchAsync(
-  async(req: Request, res: Response) => {
-    const file = req.file;
-    const data = req.body;
-    const result = await UserService.createTeacher(file as Express.Multer.File, data);
+const createTeacher = catchAsync(async (req: Request, res: Response) => {
+  const file = req.file;
+  const data = req.body;
+  const result = await UserService.createTeacher(
+    file as Express.Multer.File,
+    data,
+  );
 
-    sendResponse(res, {
-      statusCode: httpStatusCodes.CREATED,
-      success: true,
-      message: "Your account has been created as Teacher",
-      data: result
-    })
-  }
-)
+  sendResponse(res, {
+    statusCode: httpStatusCodes.CREATED,
+    success: true,
+    message: "Your account has been created as Teacher",
+    data: result,
+  });
+});
 
 export const UserController = {
+  getAllUsers,
   createAdmin,
   createStudent,
-  createTeacher
+  createTeacher,
 };
