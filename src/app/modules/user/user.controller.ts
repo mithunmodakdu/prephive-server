@@ -5,8 +5,14 @@ import { sendResponse } from "../../../utils/sendResponse";
 import httpStatusCodes from "http-status-codes";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const {page, limit} = req.query;
-  const result = await UserService.getAllUsers({page: Number(page), limit: Number(limit)});
+  const { page, limit, searchTerm, sortBy, sortOrder } = req.query;
+  const result = await UserService.getAllUsers({
+    page: Number(page),
+    limit: Number(limit),
+    searchTerm,
+    sortBy,
+    sortOrder,
+  });
 
   sendResponse(res, {
     statusCode: httpStatusCodes.OK,
