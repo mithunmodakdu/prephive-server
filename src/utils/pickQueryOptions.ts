@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const pick = <T extends Record<string, unknown>, K extends keyof T>(
+const pickQueryOptions = <T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[],
 ): Partial<T> => {
@@ -15,4 +15,4 @@ const pick = <T extends Record<string, unknown>, K extends keyof T>(
   return finalObj;
 };
 
-export default pick;
+export default pickQueryOptions;

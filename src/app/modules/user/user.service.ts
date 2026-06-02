@@ -23,10 +23,8 @@ const {limit, skip, sortBy, sortOrder} = paginationAndSortHelper(paginationAndSo
       //     mode: "insensitive"
       //   }
       // },
-      orderBy: sortBy && sortOrder ? {
+      orderBy: {
         [sortBy]: sortOrder
-      } : {
-        createdAt: 'desc'
       } 
     }
   );

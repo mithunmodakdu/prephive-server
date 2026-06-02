@@ -3,11 +3,11 @@ import catchAsync from "../../../utils/catchAsync";
 import { UserService } from "./user.service";
 import { sendResponse } from "../../../utils/sendResponse";
 import httpStatusCodes from "http-status-codes";
-import pick from "../../../utils/pick";
+import pickQueryOptions from "../../../utils/pickQueryOptions";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const paginationAndSortOptions = pick(req.query, ["page", "limit", "sortBy", "sortOrder"])
-  const filters = pick(req.query, ["email", "status", "role"])
+  const paginationAndSortOptions = pickQueryOptions(req.query, ["page", "limit", "sortBy", "sortOrder"])
+  const filters = pickQueryOptions(req.query, ["email", "status", "role"])
   const result = await UserService.getAllUsers(paginationAndSortOptions, filters);
 
   sendResponse(res, {
