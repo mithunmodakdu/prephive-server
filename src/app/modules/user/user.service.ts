@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcrypt from "bcryptjs";
 import { envVars } from "../../../config/env";
 import { prisma } from "../../../lib/prisma";
@@ -7,41 +8,54 @@ import {
   ICreateTeacherPayload,
 } from "./user.interface";
 import { EUserRole } from "../../../generated/prisma/enums";
+import paginationAndSortHelper, {
+  IPaginationAndSortOptions,
+} from "../../../utils/paginationAndSortHelper";
+import { userSearchableFields } from "./user.constants";
+import { Prisma } from "../../../generated/prisma/client";
 
-const getAllUsers = async ({
-  page,
-  limit,
-  searchTerm,
-  sortBy,
-  sortOrder
-}: {
-  page: number;
-  limit: number;
-  searchTerm?: string;
-  sortBy?: string;
-  sortOrder?: string
-}) => {
-  const pageNo = page || 1;
-  const limitNumber = limit || 10;
-  const skip = (pageNo - 1) * limitNumber;
-  console.log(sortBy, sortOrder)
-
-  const result = await prisma.user.findMany(
-    { skip, 
-      take: limitNumber,
-      where: {
-        email: {
-          contains: searchTerm,
-          mode: "insensitive"
-        }
-      },
-      orderBy: sortBy && sortOrder ? {
-        [sortBy]: sortOrder
-      } : {
-        createdAt: 'desc'
-      } 
-    }
+const getAllUsers = async (
+  paginationAndSortOptions: IPaginationAndSortOptions,
+  searchAndFilterOptions: any,
+) => {
+  const { limit, skip, sortBy, sortOrder } = paginationAndSortHelper(
+    paginationAndSortOptions,
   );
+  const { searchTerm, ...filterOptions } = searchAndFilterOptions;
+
+  const andConditions: Prisma.UserWhereInput[] = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: userSearchableFields.map((field) => ({
+        [field]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if(Object.keys(filterOptions).length > 0){
+    andConditions.push({
+      AND: Object.keys(filterOptions).map(key => ({
+        [key]: {
+          equals: filterOptions[key]
+        }
+      }))
+    })
+  }
+
+  const result = await prisma.user.findMany({
+    skip,
+    take: limit,
+    where: {
+      AND: andConditions
+    },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+  });
 
   return result;
 };

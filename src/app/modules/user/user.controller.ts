@@ -3,16 +3,12 @@ import catchAsync from "../../../utils/catchAsync";
 import { UserService } from "./user.service";
 import { sendResponse } from "../../../utils/sendResponse";
 import httpStatusCodes from "http-status-codes";
+import pickQueryOptions from "../../../utils/pickQueryOptions";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const { page, limit, searchTerm, sortBy, sortOrder } = req.query;
-  const result = await UserService.getAllUsers({
-    page: Number(page),
-    limit: Number(limit),
-    searchTerm,
-    sortBy,
-    sortOrder,
-  });
+  const paginationAndSortOptions = pickQueryOptions(req.query, ["page", "limit", "sortBy", "sortOrder"])
+  const searchAndFilterOptions = pickQueryOptions(req.query, ["searchTerm", "email", "status", "role"])
+  const result = await UserService.getAllUsers(paginationAndSortOptions, searchAndFilterOptions);
 
   sendResponse(res, {
     statusCode: httpStatusCodes.OK,
