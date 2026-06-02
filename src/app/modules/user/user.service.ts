@@ -24,7 +24,6 @@ const getAllUsers = async ({
   const pageNo = page || 1;
   const limitNumber = limit || 10;
   const skip = (pageNo - 1) * limitNumber;
-  console.log(sortBy, sortOrder)
 
   const result = await prisma.user.findMany(
     { skip, 

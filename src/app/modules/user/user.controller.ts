@@ -3,8 +3,10 @@ import catchAsync from "../../../utils/catchAsync";
 import { UserService } from "./user.service";
 import { sendResponse } from "../../../utils/sendResponse";
 import httpStatusCodes from "http-status-codes";
+import pick from "../../../utils/pick";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const options = pick(req.query, ["page", "limit"])
   const { page, limit, searchTerm, sortBy, sortOrder } = req.query;
   const result = await UserService.getAllUsers({
     page: Number(page),
