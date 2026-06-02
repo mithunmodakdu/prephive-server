@@ -8,26 +8,54 @@ import {
   ICreateTeacherPayload,
 } from "./user.interface";
 import { EUserRole } from "../../../generated/prisma/enums";
-import paginationAndSortHelper, { IPaginationAndSortOptions } from "../../../utils/paginationAndSortHelper";
+import paginationAndSortHelper, {
+  IPaginationAndSortOptions,
+} from "../../../utils/paginationAndSortHelper";
+import { userSearchableFields } from "./user.constants";
+import { Prisma } from "../../../generated/prisma/client";
 
-const getAllUsers = async (paginationAndSortOptions: IPaginationAndSortOptions , filters: any) => {
-
-const {limit, skip, sortBy, sortOrder} = paginationAndSortHelper(paginationAndSortOptions);
-
-  const result = await prisma.user.findMany(
-    { skip, 
-      take: limit,
-      // where: {
-      //   email: {
-      //     contains: searchTerm,
-      //     mode: "insensitive"
-      //   }
-      // },
-      orderBy: {
-        [sortBy]: sortOrder
-      } 
-    }
+const getAllUsers = async (
+  paginationAndSortOptions: IPaginationAndSortOptions,
+  searchAndFilterOptions: any,
+) => {
+  const { limit, skip, sortBy, sortOrder } = paginationAndSortHelper(
+    paginationAndSortOptions,
   );
+  const { searchTerm, ...filterOptions } = searchAndFilterOptions;
+
+  const andConditions: Prisma.UserWhereInput[] = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: userSearchableFields.map((field) => ({
+        [field]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  if(Object.keys(filterOptions).length > 0){
+    andConditions.push({
+      AND: Object.keys(filterOptions).map(key => ({
+        [key]: {
+          equals: filterOptions[key]
+        }
+      }))
+    })
+  }
+
+  const result = await prisma.user.findMany({
+    skip,
+    take: limit,
+    where: {
+      AND: andConditions
+    },
+    orderBy: {
+      [sortBy]: sortOrder,
+    },
+  });
 
   return result;
 };

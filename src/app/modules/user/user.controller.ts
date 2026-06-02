@@ -7,8 +7,8 @@ import pickQueryOptions from "../../../utils/pickQueryOptions";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const paginationAndSortOptions = pickQueryOptions(req.query, ["page", "limit", "sortBy", "sortOrder"])
-  const filters = pickQueryOptions(req.query, ["email", "status", "role"])
-  const result = await UserService.getAllUsers(paginationAndSortOptions, filters);
+  const searchAndFilterOptions = pickQueryOptions(req.query, ["searchTerm", "email", "status", "role"])
+  const result = await UserService.getAllUsers(paginationAndSortOptions, searchAndFilterOptions);
 
   sendResponse(res, {
     statusCode: httpStatusCodes.OK,
