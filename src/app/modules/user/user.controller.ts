@@ -6,15 +6,9 @@ import httpStatusCodes from "http-status-codes";
 import pick from "../../../utils/pick";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const options = pick(req.query, ["page", "limit"])
-  const { page, limit, searchTerm, sortBy, sortOrder } = req.query;
-  const result = await UserService.getAllUsers({
-    page: Number(page),
-    limit: Number(limit),
-    searchTerm,
-    sortBy,
-    sortOrder,
-  });
+  const paginationAndSortOptions = pick(req.query, ["page", "limit", "sortBy", "sortOrder"])
+  const filters = pick(req.query, ["email", "status", "role"])
+  const result = await UserService.getAllUsers(paginationAndSortOptions, filters);
 
   sendResponse(res, {
     statusCode: httpStatusCodes.OK,

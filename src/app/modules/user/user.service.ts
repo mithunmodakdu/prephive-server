@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import bcrypt from "bcryptjs";
 import { envVars } from "../../../config/env";
 import { prisma } from "../../../lib/prisma";
@@ -7,33 +8,21 @@ import {
   ICreateTeacherPayload,
 } from "./user.interface";
 import { EUserRole } from "../../../generated/prisma/enums";
+import paginationAndSortHelper, { IPaginationAndSortOptions } from "../../../utils/paginationAndSortHelper";
 
-const getAllUsers = async ({
-  page,
-  limit,
-  searchTerm,
-  sortBy,
-  sortOrder
-}: {
-  page: number;
-  limit: number;
-  searchTerm?: string;
-  sortBy?: string;
-  sortOrder?: string
-}) => {
-  const pageNo = page || 1;
-  const limitNumber = limit || 10;
-  const skip = (pageNo - 1) * limitNumber;
+const getAllUsers = async (paginationAndSortOptions: IPaginationAndSortOptions , filters: any) => {
+
+const {limit, skip, sortBy, sortOrder} = paginationAndSortHelper(paginationAndSortOptions);
 
   const result = await prisma.user.findMany(
     { skip, 
-      take: limitNumber,
-      where: {
-        email: {
-          contains: searchTerm,
-          mode: "insensitive"
-        }
-      },
+      take: limit,
+      // where: {
+      //   email: {
+      //     contains: searchTerm,
+      //     mode: "insensitive"
+      //   }
+      // },
       orderBy: sortBy && sortOrder ? {
         [sortBy]: sortOrder
       } : {
