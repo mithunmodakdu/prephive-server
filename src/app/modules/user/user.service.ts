@@ -14,10 +14,12 @@ import paginationAndSortHelper, {
 import { userSearchableFields } from "./user.constants";
 import { Prisma } from "../../../generated/prisma/client";
 
+
 const getAllUsers = async (
   paginationAndSortOptions: IPaginationAndSortOptions,
   searchAndFilterOptions: any,
 ) => {
+
   const {page, limit, skip, sortBy, sortOrder } = paginationAndSortHelper(
     paginationAndSortOptions,
   );
