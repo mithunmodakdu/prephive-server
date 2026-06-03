@@ -3,13 +3,20 @@ import { NextFunction, Request, Response } from "express";
 import { IErrorSource } from "../../utils/errorHelpers/error.interface";
 import AppError from "../../utils/errorHelpers/AppError";
 import { envVars } from "../../config/env";
+import { handleZodError } from "../../utils/errorHelpers/handleZodError";
 
 export const globalErrorHandler = (error: any, req: Request, res: Response, next: NextFunction ) => {
   let statusCode = 500;
   let message = "Something went wrong";
-  const errorSources: IErrorSource[] = [];
+  let errorSources: IErrorSource[] = [];
 
-  if(error instanceof AppError){
+  if(error.name === "ZodError"){
+    const simplifiedError = handleZodError(error);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorSources = simplifiedError.errorSources as IErrorSource[];
+    error = error.issues;
+  }else if(error instanceof AppError){
     statusCode = error.statusCode;
     message = error.message;
   }else if(error instanceof Error) {
