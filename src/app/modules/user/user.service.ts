@@ -18,7 +18,7 @@ const getAllUsers = async (
   paginationAndSortOptions: IPaginationAndSortOptions,
   searchAndFilterOptions: any,
 ) => {
-  const { limit, skip, sortBy, sortOrder } = paginationAndSortHelper(
+  const {page, limit, skip, sortBy, sortOrder } = paginationAndSortHelper(
     paginationAndSortOptions,
   );
   const { searchTerm, ...filterOptions } = searchAndFilterOptions;
@@ -46,18 +46,31 @@ const getAllUsers = async (
     })
   }
 
-  const result = await prisma.user.findMany({
+  const whereConditions : Prisma.UserWhereInput = andConditions.length > 0 ? {
+    AND: andConditions
+  } : {};
+
+  const users = await prisma.user.findMany({
     skip,
     take: limit,
-    where: {
-      AND: andConditions
-    },
+    where: whereConditions,
     orderBy: {
       [sortBy]: sortOrder,
     },
   });
 
-  return result;
+  const total = await prisma.user.count({
+    where: whereConditions
+  })
+
+  return {
+    meta: {
+      page,
+      limit,
+      total
+    },
+    data: users
+  };
 };
 
 const createAdmin = async (
