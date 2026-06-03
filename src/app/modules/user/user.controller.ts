@@ -4,17 +4,19 @@ import { UserService } from "./user.service";
 import { sendResponse } from "../../../utils/sendResponse";
 import httpStatusCodes from "http-status-codes";
 import pickQueryOptions from "../../../utils/pickQueryOptions";
+import { userFilterableFields } from "./user.constants";
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const paginationAndSortOptions = pickQueryOptions(req.query, ["page", "limit", "sortBy", "sortOrder"])
-  const searchAndFilterOptions = pickQueryOptions(req.query, ["searchTerm", "email", "status", "role"])
+  const searchAndFilterOptions = pickQueryOptions(req.query, userFilterableFields);
   const result = await UserService.getAllUsers(paginationAndSortOptions, searchAndFilterOptions);
 
   sendResponse(res, {
     statusCode: httpStatusCodes.OK,
     success: true,
-    message: "All users data retrieved successfully.",
-    data: result,
+    message: "Users data retrieved successfully.",
+    meta: result.meta,
+    data: result.data
   });
 });
 
