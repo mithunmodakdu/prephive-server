@@ -5,6 +5,7 @@ import AppError from "../../utils/errorHelpers/AppError";
 import { envVars } from "../../config/env";
 import { handleZodError } from "../../utils/errorHelpers/handleZodError";
 import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
+import { Prisma } from "../../generated/prisma/client";
 
 export const globalErrorHandler = async(error: any, req: Request, res: Response, next: NextFunction ) => {
   
@@ -22,6 +23,22 @@ export const globalErrorHandler = async(error: any, req: Request, res: Response,
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources as IErrorSource[];
     error = error.issues;
+  }else if(error instanceof Prisma.PrismaClientKnownRequestError){
+    if(error.code === "P2002"){
+      message = "Duplicate Key Error";
+      error = error.meta;
+    }
+
+    if(error.code === "P2003"){
+      message = "Foreign key constraint failed on the field";
+      error = error.meta;
+    }
+
+    if(error.code === "P1000"){
+      message = "Authentication failed against database server.";
+      error = error.meta;
+    }
+
   }else if(error instanceof AppError){
     statusCode = error.statusCode;
     message = error.message;
