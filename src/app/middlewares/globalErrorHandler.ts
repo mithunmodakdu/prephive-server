@@ -4,8 +4,14 @@ import { IErrorSource } from "../../utils/errorHelpers/error.interface";
 import AppError from "../../utils/errorHelpers/AppError";
 import { envVars } from "../../config/env";
 import { handleZodError } from "../../utils/errorHelpers/handleZodError";
+import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
 
-export const globalErrorHandler = (error: any, req: Request, res: Response, next: NextFunction ) => {
+export const globalErrorHandler = async(error: any, req: Request, res: Response, next: NextFunction ) => {
+  
+  if(req.file){
+    await deleteImageFromCloudinary(req.file.path);
+  }
+  
   let statusCode = 500;
   let message = "Something went wrong";
   let errorSources: IErrorSource[] = [];
