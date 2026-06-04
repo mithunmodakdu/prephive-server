@@ -7,10 +7,12 @@ import {
   CreateStudentZodSchema,
   CreateTeacherZodSchema,
 } from "./user.validation";
+import checkAuth from "../../middlewares/checkAuth";
+import { EUserRole } from "../../../generated/prisma/enums";
 
 const router = express.Router();
 
-router.get("/", UserController.getAllUsers)
+router.get("/", checkAuth(EUserRole.ADMIN, EUserRole.STUDENT), UserController.getAllUsers)
 
 router.post(
   "/create-admin",

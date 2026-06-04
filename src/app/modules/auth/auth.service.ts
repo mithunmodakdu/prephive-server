@@ -1,7 +1,6 @@
 import { EUserStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../../lib/prisma";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { generateToken } from "../../../utils/jwt";
 import { envVars } from "../../../config/env";
 
