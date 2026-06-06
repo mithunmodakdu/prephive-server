@@ -23,7 +23,9 @@ export const globalErrorHandler = async(error: any, req: Request, res: Response,
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources as IErrorSource[];
     error = error.issues;
-  }else if(error instanceof Prisma.PrismaClientKnownRequestError){
+  }
+  
+  if(error instanceof Prisma.PrismaClientKnownRequestError){
     if(error.code === "P2002"){
       message = "Duplicate Key Error";
       error = error.meta;
@@ -39,10 +41,19 @@ export const globalErrorHandler = async(error: any, req: Request, res: Response,
       error = error.meta;
     }
 
-  }else if(error instanceof AppError){
+  }
+
+  if(error instanceof Prisma.PrismaClientValidationError){
+    message = "Validation Error";
+    error = error.message;
+  }
+  
+  if(error instanceof AppError){
     statusCode = error.statusCode;
     message = error.message;
-  }else if(error instanceof Error) {
+  }
+  
+  if(error instanceof Error) {
     statusCode = 500;
     message = error.message
   }
