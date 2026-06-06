@@ -6,6 +6,7 @@ import { envVars } from "../../config/env";
 import { handleZodError } from "../../utils/errorHelpers/handleZodError";
 import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
 import { Prisma } from "../../generated/prisma/client";
+import { PrismaClientInitializationError, PrismaClientUnknownRequestError } from "../../generated/prisma/internal/prismaNamespace";
 
 export const globalErrorHandler = async(error: any, req: Request, res: Response, next: NextFunction ) => {
   
@@ -43,17 +44,27 @@ export const globalErrorHandler = async(error: any, req: Request, res: Response,
 
   }
 
-  if(error instanceof Prisma.PrismaClientValidationError){
+  else if(error instanceof PrismaClientUnknownRequestError){
+    message = "Prisma Client Unknown Request Error occurred.";
+    error = error.message;
+  }
+
+  else if(error instanceof PrismaClientInitializationError){
+    message = "Prisma Client failed to initialize."
+    error = error.message;
+  }
+
+  else if(error instanceof Prisma.PrismaClientValidationError){
     message = "Validation Error";
     error = error.message;
   }
   
-  if(error instanceof AppError){
+  else if(error instanceof AppError){
     statusCode = error.statusCode;
     message = error.message;
   }
   
-  if(error instanceof Error) {
+  else if(error instanceof Error) {
     statusCode = 500;
     message = error.message
   }
