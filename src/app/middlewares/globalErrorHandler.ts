@@ -6,6 +6,7 @@ import { envVars } from "../../config/env";
 import { handleZodError } from "../../utils/errorHelpers/handleZodError";
 import { deleteImageFromCloudinary } from "../../config/cloudinary.config";
 import { Prisma } from "../../generated/prisma/client";
+import { PrismaClientInitializationError, PrismaClientUnknownRequestError } from "../../generated/prisma/internal/prismaNamespace";
 
 export const globalErrorHandler = async(error: any, req: Request, res: Response, next: NextFunction ) => {
   
@@ -23,7 +24,9 @@ export const globalErrorHandler = async(error: any, req: Request, res: Response,
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources as IErrorSource[];
     error = error.issues;
-  }else if(error instanceof Prisma.PrismaClientKnownRequestError){
+  }
+  
+  if(error instanceof Prisma.PrismaClientKnownRequestError){
     if(error.code === "P2002"){
       message = "Duplicate Key Error";
       error = error.meta;
@@ -39,10 +42,29 @@ export const globalErrorHandler = async(error: any, req: Request, res: Response,
       error = error.meta;
     }
 
-  }else if(error instanceof AppError){
+  }
+
+  else if(error instanceof PrismaClientUnknownRequestError){
+    message = "Prisma Client Unknown Request Error occurred.";
+    error = error.message;
+  }
+
+  else if(error instanceof PrismaClientInitializationError){
+    message = "Prisma Client failed to initialize."
+    error = error.message;
+  }
+
+  else if(error instanceof Prisma.PrismaClientValidationError){
+    message = "Validation Error";
+    error = error.message;
+  }
+  
+  else if(error instanceof AppError){
     statusCode = error.statusCode;
     message = error.message;
-  }else if(error instanceof Error) {
+  }
+  
+  else if(error instanceof Error) {
     statusCode = 500;
     message = error.message
   }
