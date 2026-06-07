@@ -3,6 +3,8 @@ import { prisma } from "../../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../../../utils/jwt";
 import { envVars } from "../../../config/env";
+import AppError from "../../../utils/errorHelpers/AppError";
+import httpStatusCodes from "http-status-codes";
 
 const login = async (payload: { email: string; password: string }) => {
   const user = await prisma.user.findUniqueOrThrow({
@@ -18,7 +20,7 @@ const login = async (payload: { email: string; password: string }) => {
   );
 
   if (!isCorrectPassword) {
-    throw new Error("Your password is not correct.");
+    throw new AppError(httpStatusCodes.BAD_REQUEST, "Your password is not correct.");
   }
 
   const accessToken = generateToken(
