@@ -15,3 +15,13 @@ enum EGender {
   MALE
   FEMALE
 }
+
+enum EDayOfWeek {
+  SATURDAY
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+}

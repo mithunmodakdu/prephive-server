@@ -1,0 +1,29 @@
+model TeacherSchedule {
+  id String @id @default(uuid())
+
+  teacherId String
+  subjectId String
+  batchId   String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  batch     Batch   @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  dayOfWeek EDayOfWeek
+  startTime DateTime
+  endTime   DateTime
+
+  fee Decimal @db.Decimal(10, 2)
+
+  room String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([teacherId, subjectId, batchId, dayOfWeek, startTime])
+
+  @@index([teacherId])
+  @@index([subjectId])
+  @@index([batchId])
+}
