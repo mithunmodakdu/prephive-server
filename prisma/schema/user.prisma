@@ -49,6 +49,8 @@ model Teacher {
 
   user User @relation(fields: [email], references: [email])
 
+  teacherSchedules TeacherSchedule[]
+
   @@map("teachers")
 }
 
