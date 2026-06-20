@@ -5,3 +5,13 @@ export interface IBatch {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ICreateBatchPayload {
+  name: string;
+  description: string;
+}
+
+export interface IUpdateBatchPayload {
+  name?: string;
+  description?: string;
+}
