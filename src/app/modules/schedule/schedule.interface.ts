@@ -29,3 +29,27 @@ export interface ITeacherSchedule {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ICreateTeacherSchedulePayload {
+  teacherId: string;
+  subjectId: string;
+  batchId: string;
+  dayOfWeek: EDayOfWeek;
+  startTime: Date;
+  endTime: Date;
+  fee: number;
+  room?: string | null;
+  isActive?: boolean;
+}
+
+export interface IUpdateTeacherSchedulePayload {
+  teacherId?: string;
+  subjectId?: string;
+  batchId?: string;
+  dayOfWeek?: EDayOfWeek;
+  startTime?: Date;
+  endTime?: Date;
+  fee?: number;
+  room?: string | null;
+  isActive?: boolean;
+}
