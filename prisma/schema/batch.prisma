@@ -6,4 +6,6 @@ model Batch {
   updatedAt   DateTime @updatedAt
 
   teacherSchedules TeacherSchedule[]
+
+  @@map("batches")
 }

@@ -8,4 +8,6 @@ model Subject {
   updatedAt DateTime @updatedAt
 
   teacherSchedules TeacherSchedule[]
+
+  @@map("subjects")
 }
