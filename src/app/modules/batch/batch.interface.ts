@@ -6,3 +6,9 @@ export interface IBatch {
   updatedAt: Date;
 }
 
+
+export interface ICreateBatchPayload {
+  name: string;
+  description: string;
+}
+
