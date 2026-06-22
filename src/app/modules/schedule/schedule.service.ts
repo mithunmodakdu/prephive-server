@@ -1,169 +1,65 @@
 import httpStatusCodes from "http-status-codes";
-import { Prisma } from "../../../generated/prisma/client";
 import AppError from "../../../utils/errorHelpers/AppError";
-import paginationAndSortHelper, {
-  IPaginationAndSortOptions,
-} from "../../../utils/paginationAndSortHelper";
 import { prisma } from "../../../lib/prisma";
-import {
-  ICreateTeacherSchedulePayload,
-  IUpdateTeacherSchedulePayload,
-} from "./schedule.interface";
-import { scheduleSearchableFields } from "./schedule.constants";
+import { Prisma } from "../../../generated/prisma/client";
+import { teacherScheduleMessages } from "./schedule.constants";
+import { ICreateTeacherScheduleInput } from "./schedule.interface";
 
-const getAllSchedules = async (
-  paginationAndSortOptions: IPaginationAndSortOptions,
-  searchAndFilterOptions: Record<string, unknown>,
-) => {
-  const { page, limit, skip, sortBy, sortOrder } = paginationAndSortHelper(
-    paginationAndSortOptions,
-  );
-  const { searchTerm, isActive, ...filterOptions } = searchAndFilterOptions;
 
-  const andConditions: Prisma.TeacherScheduleWhereInput[] = [];
 
-  if (typeof searchTerm === "string" && searchTerm.length > 0) {
-    andConditions.push({
-      OR: scheduleSearchableFields.map((field) => ({
-        [field]: {
-          contains: searchTerm,
-          mode: "insensitive",
-        },
-      })),
-    });
-  }
+const createTeacherSchedule = async (payload: ICreateTeacherScheduleInput) => {
+	const [teacher, subject, batch] = await Promise.all([
+		prisma.teacher.findUnique({
+			where: {
+				id: payload.teacherId,
+			},
+		}),
+		prisma.subject.findUnique({
+			where: {
+				id: payload.subjectId,
+			},
+		}),
+		prisma.batch.findUnique({
+			where: {
+				id: payload.batchId,
+			},
+		}),
+	]);
 
-  const normalizedIsActive =
-    typeof isActive === "string"
-      ? isActive === "true"
-      : typeof isActive === "boolean"
-        ? isActive
-        : undefined;
+	if (!teacher) {
+		throw new AppError(httpStatusCodes.NOT_FOUND, teacherScheduleMessages.teacherNotFound);
+	}
 
-  if (typeof normalizedIsActive === "boolean") {
-    andConditions.push({ isActive: { equals: normalizedIsActive } });
-  }
+	if (!subject) {
+		throw new AppError(httpStatusCodes.NOT_FOUND, teacherScheduleMessages.subjectNotFound);
+	}
 
-  if (Object.keys(filterOptions).length > 0) {
-    andConditions.push({
-      AND: Object.entries(filterOptions).map(([key, value]) => ({
-        [key]: {
-          equals: value,
-        },
-      })),
-    });
-  }
+	if (!batch) {
+		throw new AppError(httpStatusCodes.NOT_FOUND, teacherScheduleMessages.batchNotFound);
+	}
 
-  const whereConditions: Prisma.TeacherScheduleWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
+	const teacherSchedule = await prisma.teacherSchedule.create({
+		data: {
+			teacherId: payload.teacherId,
+			subjectId: payload.subjectId,
+			batchId: payload.batchId,
+			dayOfWeek: payload.dayOfWeek,
+			startTime: payload.startTime,
+			endTime: payload.endTime,
+			fee: new Prisma.Decimal(payload.fee),
+			room: payload.room,
+			isActive: payload.isActive ?? true,
+		},
+		include: {
+			teacher: true,
+			subject: true,
+			batch: true,
+		},
+	});
 
-  const schedules = await prisma.teacherSchedule.findMany({
-    skip,
-    take: limit,
-    where: whereConditions,
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
-    include: {
-      teacher: true,
-      subject: true,
-      batch: true,
-    },
-  });
-
-  const total = await prisma.teacherSchedule.count({
-    where: whereConditions,
-  });
-
-  return {
-    meta: {
-      page,
-      limit,
-      total,
-    },
-    data: schedules,
-  };
-};
-
-const getScheduleById = async (id: string) => {
-  const schedule = await prisma.teacherSchedule.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      teacher: true,
-      subject: true,
-      batch: true,
-    },
-  });
-
-  if (!schedule) {
-    throw new AppError(httpStatusCodes.NOT_FOUND, "Schedule not found.");
-  }
-
-  return schedule;
-};
-
-const createSchedule = async (payload: ICreateTeacherSchedulePayload) => {
-  return await prisma.teacherSchedule.create({
-    data: payload,
-    include: {
-      teacher: true,
-      subject: true,
-      batch: true,
-    },
-  });
-};
-
-const updateSchedule = async (
-  id: string,
-  payload: IUpdateTeacherSchedulePayload,
-) => {
-  const existingSchedule = await prisma.teacherSchedule.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  if (!existingSchedule) {
-    throw new AppError(httpStatusCodes.NOT_FOUND, "Schedule not found.");
-  }
-
-  return await prisma.teacherSchedule.update({
-    where: {
-      id,
-    },
-    data: payload,
-    include: {
-      teacher: true,
-      subject: true,
-      batch: true,
-    },
-  });
-};
-
-const deleteSchedule = async (id: string) => {
-  const existingSchedule = await prisma.teacherSchedule.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  if (!existingSchedule) {
-    throw new AppError(httpStatusCodes.NOT_FOUND, "Schedule not found.");
-  }
-
-  return await prisma.teacherSchedule.delete({
-    where: {
-      id,
-    },
-  });
+	return teacherSchedule;
 };
 
 export const ScheduleService = {
-  getAllSchedules,
-  getScheduleById,
-  createSchedule,
-  updateSchedule,
-  deleteSchedule,
+	createTeacherSchedule,
 };

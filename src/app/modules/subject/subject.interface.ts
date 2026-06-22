@@ -7,3 +7,11 @@ export interface ISubject {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ICreateSubjectInput {
+  name: string;
+  code?: string;
+  description?: string;
+}
+
+

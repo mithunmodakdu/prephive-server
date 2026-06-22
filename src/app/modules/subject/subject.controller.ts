@@ -2,19 +2,20 @@ import { Request, Response } from "express";
 import catchAsync from "../../../utils/catchAsync";
 import { sendResponse } from "../../../utils/sendResponse";
 import httpStatusCodes from "http-status-codes";
-import { BatchService } from "./batch.service";
+import { SubjectService } from "./subject.service";
 
-const createBatch = catchAsync(async (req: Request, res: Response) => {
-  const result = await BatchService.createBatch(req.body);
+
+const createSubject = catchAsync(async (req: Request, res: Response) => {
+  const result = await SubjectService.createSubject(req.body);
 
   sendResponse(res, {
     statusCode: httpStatusCodes.CREATED,
     success: true,
-    message: "Batch created successfully.",
+    message: "Subject created successfully.",
     data: result,
   });
 });
 
-export const BatchController = {
-  createBatch
+export const SubjectController = {
+  createSubject
 };

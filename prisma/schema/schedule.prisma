@@ -26,4 +26,6 @@ model TeacherSchedule {
   @@index([teacherId])
   @@index([subjectId])
   @@index([batchId])
+
+  @@map("teacher_schedules")
 }

@@ -1,18 +1,18 @@
 import express from "express";
-import { BatchController } from "./batch.controller";
 import { validateRequest } from "../../middlewares/validateRequest";
-import { CreateBatchZodSchema } from "./batch.validation";
 import checkAuth from "../../middlewares/checkAuth";
 import { EUserRole } from "../../../generated/prisma/enums";
+import { SubjectController } from "./subject.controller";
+import { CreateSubjectZodSchema } from "./subject.validation";
 
 const router = express.Router();
 
 
 router.post(
-  "/create-batch",
+  "/create-subject",
   checkAuth(EUserRole.ADMIN),
-  validateRequest(CreateBatchZodSchema),
-  BatchController.createBatch,
+  validateRequest(CreateSubjectZodSchema),
+  SubjectController.createSubject
 );
 
-export const batchRoutes = router;
+export const subjectRoutes = router;

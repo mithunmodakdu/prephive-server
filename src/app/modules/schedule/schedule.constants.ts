@@ -1,10 +1,7 @@
-export const scheduleSearchableFields = ["room"];
-
-export const scheduleFilterableFields = [
-  "searchTerm",
-  "teacherId",
-  "subjectId",
-  "batchId",
-  "dayOfWeek",
-  "isActive",
-];
+export const teacherScheduleMessages = {
+	created: "Teacher schedule created successfully.",
+	teacherNotFound: "Teacher not found.",
+	subjectNotFound: "Subject not found.",
+	batchNotFound: "Batch not found.",
+	invalidTimeRange: "End time must be after start time.",
+};
